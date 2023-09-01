@@ -23,9 +23,9 @@ library(tidyr)
 ## single match
 players <- fotmob_get_match_players(3610132)
 salah_id <- "292462"
-players \%>\%
-  dplyr::filter(id == salah_id) \%>\%
-  dplyr::select(player_id = id, stats) \%>\%
+players |>
+  dplyr::filter(id == salah_id) |>
+  dplyr::select(player_id = id, stats) |>
   tidyr::unnest(stats)
 
 ## multiple matches

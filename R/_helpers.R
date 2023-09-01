@@ -16,3 +16,15 @@
     safely_get_content() |>
     purrr::pluck("result")
 }
+
+#' @noRd
+.wrap_fotmob_match_f <- function(match_ids, f) {
+  purrr::map_dfr(
+    rlang::set_names(match_ids),
+    f,
+    .id = "match_id"
+  ) |>
+    dplyr::mutate(
+      dplyr::across(.data[["match_id"]], as.integer)
+    )
+}

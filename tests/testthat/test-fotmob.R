@@ -80,8 +80,8 @@ test_that("fotmob_get_league_matches() works", {
   expect_gt(nrow(epl_ll_league_matches), 0)
   expect_setequal(colnames(epl_ll_league_matches), expected_league_matches_cols)
 
-  epl_ll_league_matches_unnested <- epl_ll_league_matches %>%
-    dplyr::select(match_id = id, home, away) %>%
+  epl_ll_league_matches_unnested <- epl_ll_league_matches |>
+    dplyr::select(match_id = id, home, away) |>
     tidyr::unnest_wider(c(home, away), names_sep = "_")
 
   expect_gt(nrow(epl_ll_league_matches_unnested), 0)

@@ -1,4 +1,4 @@
-#' @importFrom purrr pluck
+#' @noRd
 .pp <- function(p, ..., n, .na, .f) {
   res <- purrr::pluck(p, ...)
   if(is.null(res) | length(res) == 0) {
@@ -7,10 +7,17 @@
   dots <- list(...)
   .f(res)
 }
+
+#' @noRd
 .ppc <- function(...) .pp(..., .na = NA_character_, .f = as.character)
+
+#' @noRd
 .ppi <- function(...) .pp(..., .na = NA_integer_, .f = as.integer)
+
+#' @noRd
 .ppl <- function(...) .pp(..., .na = NA, .f = as.logical)
-#' @importFrom purrr pluck
+
+#' @noRd
 .pp2 <- function(p, ...) {
   res <- purrr::pluck(p, ...)
   if(is.null(res) | length(res) == 0) {
@@ -19,7 +26,7 @@
   res
 }
 
-#' @importFrom tibble tibble
+#' @noRd
 .parse_stat <- function(x, nm) {
   if (all(is.na(x$key))) {
     return(tibble::tibble())
@@ -30,10 +37,7 @@
   )
 }
 
-#' @importFrom jsonlite fromJSON toJSON
-#' @importFrom purrr map_dfr discard
-#' @importFrom tidyr pivot_wider
-#' @importFrom janitor clean_names
+#' @noRd
 .clean_stats <- function(x) {
   s <- x[['stats']]
   if(is.null(s)) {
@@ -60,13 +64,11 @@
     res,
     names_from = .data[["col"]],
     values_from = .data[["value"]]
-  ) %>%
+  ) |>
     janitor::clean_names()
 }
 
-#' @importFrom purrr map_dfr
-#' @importFrom dplyr select any_of
-#' @importFrom tibble tibble
+#' @noRd
 .clean_positions <- function(p) {
   ## index represents F/M/D/G (1/2/3/4), row index represents player (usually up to 4)
   player_ids <- as.character(p[["id"]])
@@ -80,7 +82,7 @@
 
     pss <- purrr::map_dfr(ps, .clean_stats)
     if(any(colnames(pss) == "dummy")) {
-      pss <- dplyr::select(pss, -dplyr::any_of("dummy"))
+      pss <- dplyr::select(pss, -tidyselect::vars_select_helpers$any_of("dummy"))
     }
     pss
   }
@@ -128,21 +130,6 @@
   rows
 }
 
-#' @importFrom purrr map_dfr
-#' @importFrom dplyr mutate across
-#' @importFrom rlang .data
-#' @importFrom stats setNames
-.wrap_fotmob_match_f <- function(match_ids, f) {
-  purrr::map_dfr(
-    stats::setNames(match_ids, match_ids),
-    f,
-    .id = "match_id"
-  ) %>%
-    dplyr::mutate(
-      dplyr::across(.data[["match_id"]], as.integer)
-    )
-}
-
 #' Get fotmob match player details by match id
 #'
 #' Returns match details from fotmob.com
@@ -159,9 +146,9 @@
 #' ## single match
 #' players <- fotmob_get_match_players(3610132)
 #' salah_id <- "292462"
-#' players %>%
-#'   dplyr::filter(id == salah_id) %>%
-#'   dplyr::select(player_id = id, stats) %>%
+#' players |>
+#'   dplyr::filter(id == salah_id) |>
+#'   dplyr::select(player_id = id, stats) |>
 #'   tidyr::unnest(stats)
 #'
 #' ## multiple matches
@@ -173,12 +160,6 @@ fotmob_get_match_players <- function(match_ids) {
   .wrap_fotmob_match_f(match_ids, .fotmob_get_single_match_players)
 }
 
-#' @importFrom tibble as_tibble
-#' @importFrom purrr pluck map_dfr map2_dfr possibly
-#' @importFrom dplyr mutate bind_rows
-#' @importFrom tidyr unnest_wider
-#' @importFrom rlang .data
-#' @importFrom tibble as_tibble tibble
 .fotmob_get_single_match_players <- function(match_id) {
   # CRAN feedback was to remove this from the existing functions so I have for now
   # print(glue::glue("Scraping match data from fotmob for match {match_id}."))
@@ -227,7 +208,7 @@ fotmob_get_match_players <- function(match_ids) {
         .x, .y,
         .add_team_info
       )
-    ) %>%
+    ) |>
       dplyr::mutate(
         is_starter = TRUE
       )
@@ -236,7 +217,7 @@ fotmob_get_match_players <- function(match_ids) {
       bench,
       seq_along(bench),
       .add_team_info
-    ) %>%
+    ) |>
       dplyr::mutate(
         is_starter = FALSE
       )
@@ -244,7 +225,7 @@ fotmob_get_match_players <- function(match_ids) {
     res <- dplyr::bind_rows(
       clean_starters,
       clean_bench
-    ) %>%
+    ) |>
       tibble::as_tibble()
 
     res <- .coerce_team_id(res, "home")
