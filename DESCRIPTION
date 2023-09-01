@@ -19,7 +19,6 @@ Imports:
     jsonlite,
     lubridate,
     purrr,
-    rcmdcheck,
     rlang,
     rvest,
     stringr,
@@ -28,6 +27,8 @@ Imports:
     tidyselect,
     xml2
 Suggests: 
+    devtools,
+    rcmdcheck,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Encoding: UTF-8
