@@ -12,4 +12,6 @@
 
 You can install the development version of `{fotmob}` with:
 
-\`\``r remotes::install_github("tonyelhabr/fotmob")`
+``` r
+remotes::install_github("tonyelhabr/fotmob")
+```
