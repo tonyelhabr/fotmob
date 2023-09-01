@@ -3,7 +3,7 @@ Package: fotmob
 Title: Extract football (soccer) data from fotmob
 Version: 0.1.0
 Authors@R: 
-    person("Tony", "ElHabr", , "anthonyelhabr@gmail.com", role = "ctb")
+    person("Tony", "ElHabr", , "anthonyelhabr@gmail.com", role = c("aut", "cre", "cph"))
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: Allow users to obtain clean and tidy football (soccer) game,
     team and player data. Data is collected from a fotmob
@@ -17,9 +17,11 @@ Imports:
     httr,
     janitor,
     jsonlite,
+    lubridate,
     purrr,
     rlang,
     rvest,
+    stringr,
     tibble,
     tidyr,
     tidyselect,

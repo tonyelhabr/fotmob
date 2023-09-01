@@ -84,7 +84,7 @@
   stats <- res$stats
   stat_links <- stats$seasonStatLinks
   seasons <- stat_links$Name
-  valid_seasons <- setNames(seasons, seasons)
+  valid_seasons <- rlang::set_names(seasons)
 
   extract_options <- function(season) {
 

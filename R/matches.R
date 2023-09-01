@@ -58,7 +58,7 @@ fotmob_get_matches_by_date <- function(dates) {
 
 #' @noRd
 .fotmob_get_matches_by_single_date <- function(date) {
-  main_url <- pate0(BASE_URL, "api/")
+  main_url <- paste0(BASE_URL, "api/")
 
   f <- function(date) {
 

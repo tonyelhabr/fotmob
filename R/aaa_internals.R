@@ -1,3 +1,10 @@
+#' @no
+.file_reader <- function(file_url) {
+  suppressWarnings(
+    tryCatch(readRDS(url(file_url)), error = function(e) data.frame())
+  )
+}
+
 #' @noRd
 .load_page <- function(page_url) {
   agent <- getOption("fotmob.agent", default = "R")
