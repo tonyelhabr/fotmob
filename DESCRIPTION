@@ -19,6 +19,7 @@ Imports:
     jsonlite,
     lubridate,
     purrr,
+    rcmdcheck,
     rlang,
     rvest,
     stringr,
