@@ -1,5 +1,4 @@
-#' @importFrom purrr possibly map_dfr
-#' @importFrom cli cli_alert
+#' @noRd
 .load_fotmob <- function(country = NULL, league_name = NULL, league_id = NULL, cached = NULL, url_stem) {
 
   fotmob_urls <- .fotmob_get_league_ids(
@@ -22,10 +21,10 @@
   res <- purrr::map_dfr(urls, .file_reader)
 
   if(nrow(res) == 0) {
-    cli::cli_alert("Data not loaded. Please check parameters.")
+    rlang::inform("Data not loaded. Please check parameters.")
   } else {
     ## when there are multiple data sets loaded in, seems like this is the attribute for the first
-    cli::cli_alert("Data last updated {attr(res, 'scrape_timestamp')} UTC")
+    rlang::inform(sprintf("Data last updated %s UTC", attr(res, 'scrape_timestamp')))
   }
   res
 }
@@ -39,7 +38,6 @@
 #' @inheritParams fotmob_get_league_matches
 #'
 #' @return returns a dataframe of league matches
-#' @importFrom rlang maybe_missing
 #'
 #' @examples
 #' \dontrun{

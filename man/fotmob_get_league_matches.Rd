@@ -60,8 +60,8 @@ league_matches <- fotmob_get_league_matches(
 )
 
 # probably the data that you care about
-league_matches \%>\%
-  dplyr::select(match_id = id, home, away) \%>\%
+league_matches |>
+  dplyr::select(match_id = id, home, away) |>
   tidyr::unnest_wider(c(home, away), names_sep = "_")
 })
 }

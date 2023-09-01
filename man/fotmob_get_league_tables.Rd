@@ -60,7 +60,7 @@ league_tables <- fotmob_get_league_tables(
 )
 
 # look at tables if only away matches are considered
-league_tables \%>\%
+league_tables |>
   dplyr::filter(table_type == "away")
 })
 }

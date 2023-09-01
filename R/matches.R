@@ -1,3 +1,4 @@
+#' @noRd
 .extract_fotmob_match_general <- function(url) {
   resp <- safely_get_content(url)$result
   general <- resp$general
@@ -46,7 +47,7 @@
 #' library(tidyr)
 #'
 #' results <- fotmob_get_matches_by_date(date = c("20210925", "20210926"))
-#' results %>%
+#' results |>
 #'   dplyr::select(primary_id, ccode, league_name = name, match_id)
 #' })
 #' }
@@ -55,21 +56,9 @@ fotmob_get_matches_by_date <- function(dates) {
   purrr::map_dfr(dates, .fotmob_get_matches_by_single_date)
 }
 
-#' @importFrom lubridate is.Date ymd
-#' @importFrom stringr str_remove_all
-#' @importFrom glue glue
-#' @importFrom janitor clean_names
-#' @importFrom purrr possibly
-#' @importFrom tibble as_tibble tibble
-#' @importFrom tidyr unnest
-#' @importFrom dplyr rename select
-#' @importFrom tidyselect vars_select_helpers
-#' @importFrom magrittr %>%
+#' @noRd
 .fotmob_get_matches_by_single_date <- function(date) {
-  # CRAN feedback was to remove this from the existing functions so I have for now
-  # print(glue::glue('Scraping match results data from fotmob for "{date}".'))
-
-  main_url <- "https://www.fotmob.com/api/"
+  main_url <- pate0(BASE_URL, "api/")
 
   f <- function(date) {
 
@@ -87,18 +76,18 @@ fotmob_get_matches_by_date <- function(dates) {
 
     res <- resp$leagues
     if(is.null(res)) {
-      stop(sprintf('Couldn\'t find match data for `date = "%s"`.', orig_date))
+      stop(sprintf("Couldn't find match data for `date = '%s'.", orig_date))
       return(res)
     }
 
-    res %>%
-      janitor::clean_names() %>%
-      tibble::as_tibble() %>%
-      dplyr::rename(match = .data[["matches"]]) %>%
-      tidyr::unnest(.data[["match"]], names_sep = "_") %>%
-      dplyr::rename(home = .data[["match_home"]], away = .data[["match_away"]]) %>%
-      tidyr::unnest(c(.data[["home"]], .data[["away"]], .data[["match_status"]]), names_sep = "_") %>%
-      dplyr::select(-tidyselect::vars_select_helpers$where(is.list)) %>%
+    res |>
+      janitor::clean_names() |>
+      tibble::as_tibble() |>
+      dplyr::rename(match = .data[["matches"]]) |>
+      tidyr::unnest(.data[["match"]], names_sep = "_") |>
+      dplyr::rename(home = .data[["match_home"]], away = .data[["match_away"]]) |>
+      tidyr::unnest(c(.data[["home"]], .data[["away"]], .data[["match_status"]]), names_sep = "_") |>
+      dplyr::select(-tidyselect::vars_select_helpers$where(is.list)) |>
       janitor::clean_names()
   }
   fp <- purrr::possibly(
@@ -123,9 +112,9 @@ fotmob_get_matches_by_date <- function(dates) {
 #' library(dplyr)
 #' library(tidyr)
 #' results <- fotmob_get_matches_by_date(date = "20210926")
-#' match_ids <- results %>%
-#'   dplyr::select(primary_id, ccode, league_name = name, match_id) %>%
-#'   dplyr::filter(league_name == "Premier League", ccode == "ENG") %>%
+#' match_ids <- results |>
+#'   dplyr::select(primary_id, ccode, league_name = name, match_id) |>
+#'   dplyr::filter(league_name == "Premier League", ccode == "ENG") |>
 #'   dplyr::pull(match_id)
 #' match_ids # 3609987 3609979
 #' details <- fotmob_get_match_details(match_ids)
@@ -136,13 +125,7 @@ fotmob_get_match_details <- function(match_ids) {
   .wrap_fotmob_match_f(match_ids, .fotmob_get_single_match_details)
 }
 
-#' @importFrom glue glue
-#' @importFrom purrr possibly
-#' @importFrom dplyr bind_cols mutate case_when
-#' @importFrom janitor clean_names
-#' @importFrom rlang .data
-#' @importFrom tibble as_tibble tibble
-#' @importFrom tidyr unnest unnest_wider
+#' @noRd
 .fotmob_get_single_match_details <- function(match_id) {
   # CRAN feedback was to remove this from the existing functions so I have for now
   # print(glue::glue("Scraping match data from fotmob for match {match_id}."))
@@ -163,9 +146,9 @@ fotmob_get_match_details <- function(match_ids) {
     if(isTRUE(has_shots)) {
       shots <- janitor::clean_names(shots)
       df$shots <- list(shots)
-      df <- df %>%
-        tidyr::unnest(.data[["shots"]])  %>%
-        tidyr::unnest_wider(.data[["on_goal_shot"]], names_sep = "_")  %>%
+      df <- df |>
+        tidyr::unnest(.data[["shots"]])  |>
+        tidyr::unnest_wider(.data[["on_goal_shot"]], names_sep = "_")  |>
         janitor::clean_names()
     } else {
       df$shots <- NULL
@@ -195,9 +178,9 @@ fotmob_get_match_details <- function(match_ids) {
 #' library(dplyr)
 #' library(tidyr)
 #' results <- fotmob_get_matches_by_date(date = "20210926")
-#' match_ids <- results %>%
-#'   dplyr::select(primary_id, ccode, league_name = name, match_id) %>%
-#'   dplyr::filter(league_name == "Premier League", ccode == "ENG") %>%
+#' match_ids <- results |>
+#'   dplyr::select(primary_id, ccode, league_name = name, match_id) |>
+#'   dplyr::filter(league_name == "Premier League", ccode == "ENG") |>
 #'   dplyr::pull(match_id)
 #' match_ids # 3609987 3609979
 #' details <- fotmob_get_match_team_stats(match_ids)
@@ -208,12 +191,6 @@ fotmob_get_match_team_stats <- function(match_ids) {
   .wrap_fotmob_match_f(match_ids, .fotmob_get_single_match_team_stats)
 }
 
-#' @importFrom purrr possibly
-#' @importFrom dplyr bind_cols mutate across rename
-#' @importFrom janitor clean_names
-#' @importFrom rlang .data
-#' @importFrom tibble as_tibble
-#' @importFrom tidyr unnest unnest_wider hoist
 .fotmob_get_single_match_team_stats <- function(match_id) {
 
   main_url <- "https://www.fotmob.com/api/"
@@ -231,18 +208,18 @@ fotmob_get_match_team_stats <- function(match_ids) {
     has_stats <- length(stats) > 0
     df <- tibble::as_tibble(df)
     if(isTRUE(has_stats)) {
-      wide_stats <- stats  %>%
-        tidyr::unnest_wider(stats, names_sep = "_")  %>%
+      wide_stats <- stats  |>
+        tidyr::unnest_wider(stats, names_sep = "_")  |>
         tidyr::unnest(vars_select_helpers$where(is.list))
-      clean_stats <- wide_stats  %>%
+      clean_stats <- wide_stats  |>
         tidyr::hoist(
           .data[["stats_stats"]],
           "home_value" = 1
-        )  %>%
-        dplyr::rename("away_value" = .data[["stats_stats"]])  %>%
+        )  |>
+        dplyr::rename("away_value" = .data[["stats_stats"]])  |>
         dplyr::mutate(
           dplyr::across(c(.data[["home_value"]], .data[["away_value"]]), as.character)
-        )  %>%
+        )  |>
         tidyr::unnest(c(.data[["home_value"]], .data[["away_value"]]))
       df <- dplyr::bind_cols(df, clean_stats)
     }
@@ -271,9 +248,9 @@ fotmob_get_match_team_stats <- function(match_ids) {
 #' library(dplyr)
 #' library(tidyr)
 #' results <- fotmob_get_matches_by_date(date = "20210926")
-#' match_ids <- results %>%
-#'   dplyr::select(primary_id, ccode, league_name = name, match_id) %>%
-#'   dplyr::filter(league_name == "Premier League", ccode == "ENG") %>%
+#' match_ids <- results |>
+#'   dplyr::select(primary_id, ccode, league_name = name, match_id) |>
+#'   dplyr::filter(league_name == "Premier League", ccode == "ENG") |>
 #'   dplyr::pull(match_id)
 #' match_ids # 3609987 3609979
 #' details <- fotmob_get_match_info(match_ids)
@@ -305,20 +282,20 @@ fotmob_get_match_info <- function(match_ids) {
 
     info <- general$resp$content$matchFacts$infoBox
 
-    unnested_info <- info %>%
-      tibble::enframe() %>%
+    unnested_info <- info |>
+      tibble::enframe() |>
       tidyr::pivot_wider(
         names_from = .data[["name"]],
         values_from = .data[["value"]]
-      ) %>%
-      janitor::clean_names() %>%
+      ) |>
+      janitor::clean_names() |>
       tidyr::unnest_wider(
         c(tidyselect::vars_select_helpers$where(is.list), -tidyselect::vars_select_helpers$any_of("attendance")),
         names_sep = "_"
-      ) %>%
+      ) |>
       tidyr::unnest(
         tidyselect::vars_select_helpers$any_of("attendance")
-      ) %>%
+      ) |>
       janitor::clean_names()
 
     if (nrow(df) != 1) {
@@ -345,7 +322,6 @@ fotmob_get_match_info <- function(match_ids) {
 #' @inheritParams fotmob_get_match_info
 #'
 #' @return returns a dataframe of match momentum
-#' @importFrom rlang arg_match
 #' @examples
 #' \donttest{
 #' try({
@@ -358,12 +334,6 @@ fotmob_get_match_momentum <- function(match_ids) {
   .wrap_fotmob_match_f(match_ids, .fotmob_get_single_match_momentum)
 }
 
-#' @importFrom rlang .data .env
-#' @importFrom tibble as_tibble tibble
-#' @importFrom tidyr unnest
-#' @importFrom dplyr bind_rows
-#' @importFrom purrr possibly
-#' @importFrom janitor clean_names
 .fotmob_get_single_match_momentum <- function(match_id, type) {
 
   main_url <- "https://www.fotmob.com/api/"
