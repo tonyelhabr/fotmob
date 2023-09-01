@@ -1,21 +1,32 @@
-Package: fotmob
 Type: Package
+Package: fotmob
 Title: Extract football (soccer) data from fotmob
 Version: 0.1.0
-Authors@R: c(
+Authors@R: 
     person("Tony", "ElHabr", , "anthonyelhabr@gmail.com", role = "ctb")
-  )
 Maintainer: The package maintainer <yourself@somewhere.net>
-Description: Allow users to obtain clean and tidy
-    football (soccer) game, team and player data. Data is collected from a
-    fotmob <https://www.fotmob.com/>.
+Description: Allow users to obtain clean and tidy football (soccer) game,
+    team and player data. Data is collected from a fotmob
+    <https://www.fotmob.com/>.
 License: MIT + file LICENSE
+Depends: 
+    R (>= 4.0.0)
+Imports:
+    dplyr,
+    glue,
+    httr,
+    janitor,
+    jsonlite,
+    purrr,
+    rlang,
+    rvest,
+    tibble,
+    tidyr,
+    tidyselect,
+    xml2
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
-Depends: 
-  R (>= 4.0.0)
-Imports:
-  dplyr,
-  httr,
-  jsonlite,
-  purrr
+RoxygenNote: 7.2.3
