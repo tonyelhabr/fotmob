@@ -334,7 +334,7 @@ fotmob_get_league_tables <- function(country, league_name, league_id, season = N
     .fotmob_get_league_tables
   )
 }
-
+#' @noRd
 .fotmob_get_league_tables <- function(league_id, page_url, season = NULL) {
 
   season <- switch(!is.na(season), season, NULL)

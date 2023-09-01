@@ -86,10 +86,11 @@
   seasons <- stat_links$Name
   valid_seasons <- rlang::set_names(seasons)
 
+  ## TODO: Clean up this function
   extract_options <- function(season) {
 
     link <- stat_links |>
-      filter(.data[["Name"]] == !!season)
+      dplyr::filter(.data[["Name"]] == !!season)
 
     topstats_url <- sprintf("https://data.fotmob.com/%s", link$RelativePath)
     topstats <- purrr::map_dfr(topstats_url, safely_get_content) ## Liga MX will have two rows
@@ -135,7 +136,7 @@
   possibly_extract_options <- purrr::possibly(
     extract_options,
     otherwise = tibble::tibble(),
-    quiet = FALSE
+    quiet = TRUE
   )
 
   valid_seasons |>
