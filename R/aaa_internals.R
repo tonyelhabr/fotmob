@@ -1,4 +1,4 @@
-#' @no
+#' @noRd
 .file_reader <- function(file_url) {
   suppressWarnings(
     tryCatch(readRDS(url(file_url)), error = function(e) data.frame())

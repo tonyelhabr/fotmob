@@ -1,6 +1,7 @@
 ## TODO: Cache this.
+#' @importFrom utils read.csv
 .fotmob_load_csv <- function(suffix) {
-  read.csv(
+  utils::read.csv(
     sprintf("https://raw.githubusercontent.com/JaseZiv/worldfootballR_data/master/raw-data/%s", suffix)
   )
 }
